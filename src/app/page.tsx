@@ -1,4 +1,5 @@
-"use client";
+"use client";  // Mark the component as a client-side component
+
 import { useState } from 'react';
 
 export default function Home() {
@@ -6,7 +7,7 @@ export default function Home() {
   const [result, setResult] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setResult('');
@@ -22,7 +23,7 @@ export default function Home() {
 
       if (response.ok) {
         const finalOutput = data?.outputs?.[0]?.outputs?.[0]?.results?.message?.text;
-        
+
         if (finalOutput) {
           setResult(finalOutput);
         } else {
@@ -31,8 +32,13 @@ export default function Home() {
       } else {
         setResult(data.error || 'Error occurred.');
       }
-    } catch (error) {
-      setResult('Failed to fetch response from API.');
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error(error.message);  // Log the error message
+        setResult('Failed to fetch response from API.');
+      } else {
+        setResult('An unknown error occurred.');
+      }
     } finally {
       setLoading(false);
     }
@@ -41,7 +47,7 @@ export default function Home() {
   return (
     <div className="container">
       <h1 className="title">Social Insights</h1>
-      <h2 className='subtitle'>Get Your posts insights in one click!</h2>
+      <h2 className="subtitle">Get Your posts insights in one click!</h2>
       <form onSubmit={handleSubmit} className="form">
         <input
           type="text"
@@ -82,7 +88,7 @@ export default function Home() {
           font-weight: 600;
           text-align: center;
         }
-          .subtitle {
+        .subtitle {
           font-size: 1.5rem;
           color: #333;
           margin-bottom: 20px;
